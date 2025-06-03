@@ -1,0 +1,6 @@
+@XE_HostAddress = http://localhost:5056
+
+GET {{XE_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
