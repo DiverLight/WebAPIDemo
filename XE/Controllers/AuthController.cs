@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using XE.Services;
 using XE.DTOs;
 
@@ -20,8 +20,8 @@ public class AuthController : ControllerBase
     {
        var success = await _userService.RegisterAsync(registerDto);
         if (!success)
-            return BadRequest("Registration failed. Email may already be in use.");
-        return Ok("Registration successful.");
+            return BadRequest("Đăng ký thất bại, Email đã tồn tại.");
+        return Ok("Đăng ký thành công.");
     }
 
     [HttpPost("login")]
@@ -29,7 +29,7 @@ public class AuthController : ControllerBase
     {
         var token = await _userService.LoginAsync(loginDto);
         if (token == null)
-            return Unauthorized("Invalid email or password.");
+            return Unauthorized("Sai tài khoản hoặc mật khẩu");
         return Ok(new { Token = token });
     }
 }

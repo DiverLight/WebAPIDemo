@@ -1,4 +1,4 @@
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using XE.Models;
 using XE.Services;
 using XE.DTOs;
@@ -26,8 +26,13 @@ public class UserServices
 
     public async Task<bool> RegisterAsync(RegisterDto dto)
     {
+        // Kiểm tra confirm password
+        if (dto.Password != dto.ConfirmPassword)
+            return false; // mật khẩu không khớp
+
+        // Kiểm tra email đã tồn tại
         if (await _users.Find(u => u.Email == dto.Email).AnyAsync())
-            return false; // Email already exists
+            return false; // địa chỉ email đã tồn tại
 
         var user = new User
         {
@@ -37,14 +42,14 @@ public class UserServices
         };
 
         await _users.InsertOneAsync(user);
-        return true; // Registration successful
+        return true; // đăng ký thành công
     }
 
     public async Task<string> LoginAsync(LoginDto dto)
     {
-        var user = await _users.Find(u => u.Username == dto.Username).FirstOrDefaultAsync();
+        var user = await _users.Find(u => u.Email == dto.Email).FirstOrDefaultAsync();
         if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-            return null; // Invalid credentials
+            return null; // tài khoản hoặc mật khẩu không hợp lệ
         // Generate a JWT token or session ID here
         // For simplicity, returning the user ID as a token
         return GenerateJwtToken(user);
